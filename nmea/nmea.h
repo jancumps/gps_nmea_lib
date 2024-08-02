@@ -16,7 +16,7 @@
 
 namespace nmea {
 
-typedef std::chrono::hh_mm_ss<std::chrono::duration<int, std::ratio<1, 1000>>> time_t;
+typedef std::chrono::hh_mm_ss<std::chrono::duration<long long, std::ratio<1, 1000>>> time_t;
 
 class nmea {
 public:
