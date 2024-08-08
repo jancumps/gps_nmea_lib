@@ -49,10 +49,10 @@ nmea::talker_id nmea::get_system_id(const std::string_view& sv) {
 	return id;
 }
 
-float nmea::get_coord(const unsigned int integer_chars, const std::string_view& sv) {
+float nmea::get_coord(const unsigned int degrees_chars, const std::string_view& sv) {
 	std::string s(sv);
-	float coord = std::stof(s.substr(0, integer_chars), nullptr);
-	coord += std::stof(s.substr(integer_chars), nullptr) / 60.0;
+	float coord = std::stof(s.substr(0, degrees_chars), nullptr);
+	coord += std::stof(s.substr(degrees_chars), nullptr) / 60.0;
 	return coord;
 }
 
