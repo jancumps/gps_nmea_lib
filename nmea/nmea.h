@@ -47,7 +47,7 @@ public:
 
 	static talker_id get_talker_id(const std::string_view& sv);
 	static talker_id get_system_id(const std::string_view& sv);
-	static float get_coord(const std::string_view& sv);
+	static float get_coord(const unsigned int integer_chars, const std::string_view& sv);
 	static dir get_dir(const std::string_view& sv);
 	static void get_time(const std::string_view& sv, time_t& t);
 	static void get_date(const std::string_view& sv, std::chrono::year_month_day& d);

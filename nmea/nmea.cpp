@@ -49,10 +49,10 @@ nmea::talker_id nmea::get_system_id(const std::string_view& sv) {
 	return id;
 }
 
-float nmea::get_coord(const std::string_view& sv) {
+float nmea::get_coord(const unsigned int integer_chars, const std::string_view& sv) {
 	std::string s(sv);
-	float coord = std::stof(s.substr(0, 2), nullptr);
-	coord += std::stof(s.substr(2), nullptr) / 60.0;
+	float coord = std::stof(s.substr(0, integer_chars), nullptr);
+	coord += std::stof(s.substr(integer_chars), nullptr) / 60.0;
 	return coord;
 }
 
@@ -120,7 +120,7 @@ bool gll::from_data(const std::string& data, gll& gll) {
     		gll.source = nmea::get_talker_id(std::string_view(word));
     		break;
     	case 1: // latitude
-    		gll.lat = nmea::get_coord(std::string_view(word));
+    		gll.lat = nmea::get_coord(2, std::string_view(word));
     		break;
     	case 2: // latitude direction
     		if (nmea::get_dir(std::string_view(word)) == nmea::s) {
@@ -128,7 +128,7 @@ bool gll::from_data(const std::string& data, gll& gll) {
     		}
     		break;
     	case 3: // longitude
-    		gll.lon = nmea::get_coord(std::string_view(word));
+    		gll.lon = nmea::get_coord(3, std::string_view(word));
     		break;
     	case 4: // longitude direction
     		if (nmea::get_dir(std::string_view(word)) == nmea::w) {
@@ -162,7 +162,7 @@ bool gga::from_data(const std::string& data, gga& gga) {
     		nmea::get_time(std::string_view(word), gga.t);
     		break;
     	case 2: // latitude
-    		gga.lat = nmea::get_coord(std::string_view(word));
+    		gga.lat = nmea::get_coord(2, std::string_view(word));
     		break;
     	case 3: // latitude direction
     		if (nmea::get_dir(std::string_view(word)) == nmea::s) {
@@ -170,7 +170,7 @@ bool gga::from_data(const std::string& data, gga& gga) {
     		}
     		break;
     	case 4: // longitude
-    		gga.lon = nmea::get_coord(std::string_view(word));
+    		gga.lon = nmea::get_coord(3, std::string_view(word));
     		break;
     	case 5: // longitude direction
     		if (nmea::get_dir(std::string_view(word)) == nmea::w) {
@@ -311,7 +311,7 @@ bool rmc::from_data(const std::string& data, rmc& rmc) {
     		rmc.valid = nmea::get_valid(std::string_view(word));
     		break;
     	case 3: // latitude
-    		rmc.lat = nmea::get_coord(std::string_view(word));
+    		rmc.lat = nmea::get_coord(2, std::string_view(word));
     		break;
     	case 4: // latitude direction
     		if (nmea::get_dir(std::string_view(word)) == nmea::s) {
@@ -319,7 +319,7 @@ bool rmc::from_data(const std::string& data, rmc& rmc) {
     		}
     		break;
     	case 5: // longitude
-    		rmc.lon = nmea::get_coord(std::string_view(word));
+    		rmc.lon = nmea::get_coord(3, std::string_view(word));
     		break;
     	case 6: // longitude direction
     		if (nmea::get_dir(std::string_view(word)) == nmea::w) {
