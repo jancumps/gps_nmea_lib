@@ -74,6 +74,7 @@ public:
     time_t t;
     unsigned int sats;
     unsigned int qual;
+	float alt;
 };
 
 typedef std::array<unsigned int, 12> gsa_sat_array;

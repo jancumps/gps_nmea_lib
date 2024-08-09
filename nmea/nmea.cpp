@@ -7,7 +7,7 @@
 
 #include <cassert>
 #include <ranges>
-
+#include <cmath>
 #include "nmea.h"
 
 using std::operator""sv;
@@ -51,6 +51,7 @@ nmea::talker_id nmea::get_system_id(const std::string_view& sv) {
 
 float nmea::get_coord(const unsigned int degrees_chars, const std::string_view& sv) {
 	std::string s(sv);
+	// a float (and a double) may not precisely represent the value in the message
 	float coord = std::stof(s.substr(0, degrees_chars), nullptr);
 	coord += std::stof(s.substr(degrees_chars), nullptr) / 60.0;
 	return coord;
@@ -183,7 +184,11 @@ bool gga::from_data(const std::string& data, gga& gga) {
     	case 7: // sats
 			gga.sats = std::stoi(std::string(std::string_view(word)));
     		break;
-    	default: // skip 8 .. 15
+    	case 9: // altitude
+			// a float (and a double) may not precisely represent the value in the message
+			gga.alt = std::stof(std::string(std::string_view(word)), nullptr);
+    		break;		
+    	default: // skip 8, 10 .. 15
     		break;
     	}
     	field++;
