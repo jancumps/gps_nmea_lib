@@ -83,11 +83,6 @@ void nmea::get_time(const std::string_view& sv, time_t& t) {
 		    std::chrono::seconds(std::stoi(s.substr(4,  2))) +
 			std::chrono::milliseconds(std::stoi(s.substr(7)))
 	};
-/*	t = std::chrono::hh_mm_ss(10.5h + 98min + 2020s + 0.5s);
-	t.set_h(std::stoi(s.substr(0,  2)));
-	t.set_m(std::stoi(s.substr(2,  2)));
-	t.set_s(std::stoi(s.substr(4,  2)));
-	t.set_ms(std::stoi(s.substr(7)));*/
 }
 
 void nmea::get_date(const std::string_view& sv, std::chrono::year_month_day& d) {

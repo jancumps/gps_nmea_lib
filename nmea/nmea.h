@@ -21,6 +21,7 @@ typedef std::chrono::hh_mm_ss<std::chrono::duration<long long, std::ratio<1, 100
 class nmea {
 public:
 	enum talker_id {
+		notset,				// avoid that an initialised but unset variable assumes the first valid value
 		gps,     			// If system works in GPS only mode
 		glonass, 			// If system works in GLONASS only mode
 		galileo, 			// If system works in GALILEO only mode
