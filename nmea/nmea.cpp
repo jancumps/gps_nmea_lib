@@ -15,7 +15,7 @@ constexpr auto delim{","sv};
 
 namespace nmea {
 
-nmea::talker_id nmea::get_talker_id(const std::string_view& sv) {
+nmea::talker_id nmea::talker(const std::string_view& sv) {
 	talker_id id = gps;
 	if (sv.starts_with("$GP")) {
 		id = gps;
@@ -33,7 +33,7 @@ nmea::talker_id nmea::get_talker_id(const std::string_view& sv) {
 	return id;
 }
 
-nmea::talker_id nmea::get_system_id(const std::string_view& sv) {
+nmea::talker_id nmea::system(const std::string_view& sv) {
 	talker_id id = gps;
 	if (sv.starts_with("1")) {
 		id = gps;
@@ -49,7 +49,7 @@ nmea::talker_id nmea::get_system_id(const std::string_view& sv) {
 	return id;
 }
 
-float nmea::get_coord(const unsigned int degrees_chars, const std::string_view& sv) {
+float nmea::coord(const unsigned int degrees_chars, const std::string_view& sv) {
 	std::string s(sv);
 	// a float (and a double) may not precisely represent the value in the message
 	float coord = std::stof(s.substr(0, degrees_chars), nullptr);
@@ -57,12 +57,12 @@ float nmea::get_coord(const unsigned int degrees_chars, const std::string_view& 
 	return coord;
 }
 
-nmea::dir nmea::get_dir(const std::string_view& sv) {
+nmea::direction nmea::dir(const std::string_view& sv) {
 	assert(sv.starts_with('N') ||
 			sv.starts_with('S') ||
 			sv.starts_with('E') ||
 			sv.starts_with('W'));
-	dir d = n;
+	direction d = n;
 	if (sv.starts_with('N')) {
 		d = n;
 	} else if (sv.starts_with('S')) {
@@ -75,7 +75,7 @@ nmea::dir nmea::get_dir(const std::string_view& sv) {
 	return d;
 }
 
-void nmea::get_time(const std::string_view& sv, time_t& t) {
+void nmea::time(const std::string_view& sv, time_t& t) {
 	std::string s(sv);
 		t = time_t{
 			std::chrono::hours(std::stoi(s.substr(0,  2))) +
@@ -85,7 +85,7 @@ void nmea::get_time(const std::string_view& sv, time_t& t) {
 	};
 }
 
-void nmea::get_date(const std::string_view& sv, std::chrono::year_month_day& d) {
+void nmea::date(const std::string_view& sv, std::chrono::year_month_day& d) {
 	std::string s(sv);
 	d = std::chrono::year_month_day{
 			std::chrono::year(std::stoi(s.substr(4)) + 2000), // TODO Y2.1K warning
@@ -94,17 +94,17 @@ void nmea::get_date(const std::string_view& sv, std::chrono::year_month_day& d) 
 	};
 }
 
-bool nmea::get_valid(const std::string_view& sv) {
+bool nmea::valid(const std::string_view& sv) {
 	assert(sv.starts_with('A') ||
 			sv.starts_with('V'));
 	return sv.starts_with('A');
 }
 
-nmea::qual nmea::get_qual(const std::string_view& sv) {
+nmea::quality nmea::qual(const std::string_view& sv) {
 	// the typecast from int to enem<unsigned int> below is confirmed
 	// to be safe in this case
 	// https://www.modernescpp.com/index.php/strongly-typed-enums/
-	return static_cast<nmea::qual>(std::stoi(std::string(sv)));
+	return static_cast<nmea::quality>(std::stoi(std::string(sv)));
 }
 
 // $GPGLL,<Lat>,<N/S>,<Long>,<E/W>,<Timestamp>,<Status>,<mode indicator>*<checksum><cr><lf>
@@ -113,29 +113,29 @@ bool gll::from_data(const std::string& data, gll& gll) {
     for (const auto word : std::views::split(data, delim)) {
     	switch (field) {
     	case 0: // talker id
-    		gll.source = nmea::get_talker_id(std::string_view(word));
+    		gll.source = nmea::talker(std::string_view(word));
     		break;
     	case 1: // latitude
-    		gll.lat = nmea::get_coord(2, std::string_view(word));
+    		gll.lat = nmea::coord(2, std::string_view(word));
     		break;
     	case 2: // latitude direction
-    		if (nmea::get_dir(std::string_view(word)) == nmea::s) {
+    		if (nmea::dir(std::string_view(word)) == nmea::s) {
     			gll.lat = gll.lat * -1;
     		}
     		break;
     	case 3: // longitude
-    		gll.lon = nmea::get_coord(3, std::string_view(word));
+    		gll.lon = nmea::coord(3, std::string_view(word));
     		break;
     	case 4: // longitude direction
-    		if (nmea::get_dir(std::string_view(word)) == nmea::w) {
+    		if (nmea::dir(std::string_view(word)) == nmea::w) {
     			gll.lon = gll.lon * -1;
     		}
     		break;
     	case 5: // timestamp
-    		nmea::get_time(std::string_view(word), gll.t);
+    		nmea::time(std::string_view(word), gll.t);
     		break;
     	case 6: // valid
-    		gll.valid = nmea::get_valid(std::string_view(word));
+    		gll.valid = nmea::valid(std::string_view(word));
     		break;
     	default: // skip 7
     		break;
@@ -152,29 +152,29 @@ bool gga::from_data(const std::string& data, gga& gga) {
     for (const auto word : std::views::split(data, delim)) {
     	switch (field) {
     	case 0: // talker id
-    		gga.source = nmea::get_talker_id(std::string_view(word));
+    		gga.source = nmea::talker(std::string_view(word));
     		break;
     	case 1: // timestamp
-    		nmea::get_time(std::string_view(word), gga.t);
+    		nmea::time(std::string_view(word), gga.t);
     		break;
     	case 2: // latitude
-    		gga.lat = nmea::get_coord(2, std::string_view(word));
+    		gga.lat = nmea::coord(2, std::string_view(word));
     		break;
     	case 3: // latitude direction
-    		if (nmea::get_dir(std::string_view(word)) == nmea::s) {
+    		if (nmea::dir(std::string_view(word)) == nmea::s) {
     			gga.lat = gga.lat * -1;
     		}
     		break;
     	case 4: // longitude
-    		gga.lon = nmea::get_coord(3, std::string_view(word));
+    		gga.lon = nmea::coord(3, std::string_view(word));
     		break;
     	case 5: // longitude direction
-    		if (nmea::get_dir(std::string_view(word)) == nmea::w) {
+    		if (nmea::dir(std::string_view(word)) == nmea::w) {
     			gga.lon = gga.lon * -1;
     		}
     		break;
     	case 6: // qual
-    		gga.qual = nmea::get_qual(std::string_view(word));
+    		gga.qual = nmea::qual(std::string_view(word));
     		break;
     	case 7: // sats
 			gga.sats = std::stoi(std::string(std::string_view(word)));
@@ -199,7 +199,7 @@ bool gsa::from_data(const std::string& data, gsa& gsa) {
     for (const auto word : std::views::split(v, delim)) {
     	switch (field) {
     	case 0: // talker id
-    		gsa.source = nmea::get_talker_id(std::string_view(word));
+    		gsa.source = nmea::talker(std::string_view(word));
     		break;
     	case 3:
     	case 4:
@@ -221,7 +221,7 @@ bool gsa::from_data(const std::string& data, gsa& gsa) {
     		}
     		break;
     	case 15:
-    		gsa.system_id = nmea::get_system_id(std::string_view(word));
+    		gsa.system_id = nmea::system(std::string_view(word));
     		break;
     	default: // skip 1,2, 16, 17
     		break;
@@ -242,7 +242,7 @@ bool gsv::from_data(const std::string& data, gsv& gsv) {
     for (const auto word : std::views::split(v, delim)) {
     	switch (field) {
     	case 0: // talker id
-    		gsv.source = nmea::get_talker_id(std::string_view(word));
+    		gsv.source = nmea::talker(std::string_view(word));
     		break;
     	case 4:
     	case 8:
@@ -302,32 +302,32 @@ bool rmc::from_data(const std::string& data, rmc& rmc) {
     for (const auto word : std::views::split(data, delim)) {
     	switch (field) {
     	case 0: // talker id
-    		rmc.source = nmea::get_talker_id(std::string_view(word));
+    		rmc.source = nmea::talker(std::string_view(word));
     		break;
     	case 1: // timestamp
-    		nmea::get_time(std::string_view(word), rmc.t);
+    		nmea::time(std::string_view(word), rmc.t);
     		break;
     	case 2: // valid
-    		rmc.valid = nmea::get_valid(std::string_view(word));
+    		rmc.valid = nmea::valid(std::string_view(word));
     		break;
     	case 3: // latitude
-    		rmc.lat = nmea::get_coord(2, std::string_view(word));
+    		rmc.lat = nmea::coord(2, std::string_view(word));
     		break;
     	case 4: // latitude direction
-    		if (nmea::get_dir(std::string_view(word)) == nmea::s) {
+    		if (nmea::dir(std::string_view(word)) == nmea::s) {
     			rmc.lat = rmc.lat * -1;
     		}
     		break;
     	case 5: // longitude
-    		rmc.lon = nmea::get_coord(3, std::string_view(word));
+    		rmc.lon = nmea::coord(3, std::string_view(word));
     		break;
     	case 6: // longitude direction
-    		if (nmea::get_dir(std::string_view(word)) == nmea::w) {
+    		if (nmea::dir(std::string_view(word)) == nmea::w) {
     			rmc.lon = rmc.lon * -1;
     		}
     		break;
     	case 9: // dqtestamp
-    		nmea::get_date(std::string_view(word), rmc.d);
+    		nmea::date(std::string_view(word), rmc.d);
     		break;
     	default: // skip 7, 8, 10, 11, 12
     		break;

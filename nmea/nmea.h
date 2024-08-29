@@ -29,14 +29,14 @@ public:
 		multiconstellation 	// If system works in multi-constellation mode
 	};
 
-	enum dir {
+	enum direction {
 		n,
 		s,
 		e,
 		w
 	};
 
-	enum qual : unsigned int {
+	enum quality : unsigned int {
 		q0 = 0,
 		q1 = 1,
 		q2 = 2,
@@ -45,14 +45,14 @@ public:
 
 	nmea() = delete; // prevent  creation of objects of this utility class
 
-	static talker_id get_talker_id(const std::string_view& sv);
-	static talker_id get_system_id(const std::string_view& sv);
-	static float get_coord(const unsigned int degrees_chars, const std::string_view& sv);
-	static dir get_dir(const std::string_view& sv);
-	static void get_time(const std::string_view& sv, time_t& t);
-	static void get_date(const std::string_view& sv, std::chrono::year_month_day& d);
-	static bool get_valid(const std::string_view& sv);
-	static qual get_qual(const std::string_view& sv);
+	static talker_id talker(const std::string_view& sv);
+	static talker_id system(const std::string_view& sv);
+	static float coord(const unsigned int degrees_chars, const std::string_view& sv);
+	static direction dir(const std::string_view& sv);
+	static void time(const std::string_view& sv, time_t& t);
+	static void date(const std::string_view& sv, std::chrono::year_month_day& d);
+	static bool valid(const std::string_view& sv);
+	static quality qual(const std::string_view& sv);
 };
 
 class gll {
