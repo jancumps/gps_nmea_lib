@@ -17,32 +17,32 @@ namespace nmea {
 
 typedef std::chrono::hh_mm_ss<std::chrono::duration<long long, std::ratio<1, 1000>>> time_t;
 
+enum class talker_id {
+	notset,				// avoid that an initialised but unset variable assumes the first valid value
+	gps,     			// If system works in GPS only mode
+	glonass, 			// If system works in GLONASS only mode
+	galileo, 			// If system works in GALILEO only mode
+	beidou,  			// If system works in BEIDOU only mode
+	qzss,    			// If system works in QZSS only mode
+	multiconstellation 	// If system works in multi-constellation mode
+};
+
+enum class direction {
+	n,
+	s,
+	e,
+	w
+};
+
+enum class quality : unsigned int {
+	q0 = 0,
+	q1 = 1,
+	q2 = 2,
+	q6 = 6
+};
+
 class nmea {
 public:
-	enum talker_id {
-		notset,				// avoid that an initialised but unset variable assumes the first valid value
-		gps,     			// If system works in GPS only mode
-		glonass, 			// If system works in GLONASS only mode
-		galileo, 			// If system works in GALILEO only mode
-		beidou,  			// If system works in BEIDOU only mode
-		qzss,    			// If system works in QZSS only mode
-		multiconstellation 	// If system works in multi-constellation mode
-	};
-
-	enum direction {
-		n,
-		s,
-		e,
-		w
-	};
-
-	enum quality : unsigned int {
-		q0 = 0,
-		q1 = 1,
-		q2 = 2,
-		q6 = 6
-	};
-
 	nmea() = delete; // prevent  creation of objects of this utility class
 
 	static talker_id talker(const std::string_view& sv);
@@ -58,7 +58,7 @@ public:
 class gll {
 public:
 	static bool from_data(const std::string& data, gll& gll);
-	nmea::talker_id source;
+	talker_id source;
 	float lat;
     float lon;
     time_t t;
@@ -68,12 +68,12 @@ public:
 class gga {
 public:
 	static bool from_data(const std::string& data, gga& gga);
-	nmea::talker_id source;
+	talker_id source;
     float lat;
     float lon;
     time_t t;
     unsigned int sats;
-    unsigned int qual;
+    quality qual;
 	float alt;
 };
 
@@ -82,8 +82,8 @@ typedef std::array<unsigned int, 12> gsa_sat_array;
 class gsa {
 public:
 	static bool from_data(const std::string& data, gsa& gsa);
-	nmea::talker_id source;
-	nmea::talker_id system_id;
+	talker_id source;
+	talker_id system_id;
 	gsa_sat_array sats;
 };
 
@@ -100,14 +100,14 @@ typedef std::array<gsv_sat, 4> gsv_sat_array;
 class gsv {
 public:
 	static bool from_data(const std::string& data, gsv& gsv);
-	nmea::talker_id source;
+	talker_id source;
 	gsv_sat_array sats;
 };
 
 class rmc {
 public:
 	static bool from_data(const std::string& data, rmc& rmc);
-	nmea::talker_id source;
+	talker_id source;
 	float lat;
     float lon;
     float speed;
