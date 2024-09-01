@@ -179,11 +179,15 @@ bool gga::from_data(const std::string& data, gga& gga) {
     	case 7: // sats
 			gga.sats = std::stoi(std::string(std::string_view(word)));
     		break;
-    	case 9: // altitude
+    	case 9: // altitude (in meters)
 			// a float (and a double) may not precisely represent the value in the message
 			gga.alt = std::stof(std::string(std::string_view(word)), nullptr);
     		break;		
-    	default: // skip 8, 10 .. 15
+    	case 11: // geoid separation (in meters)
+			// a float (and a double) may not precisely represent the value in the message
+			gga.geosep = std::stof(std::string(std::string_view(word)), nullptr);
+    		break;		
+    	default: // skip 8, 10, 12 .. 15
     		break;
     	}
     	field++;

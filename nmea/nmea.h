@@ -75,6 +75,7 @@ public:
     unsigned int sats;
     quality qual;
 	float alt;
+	float geosep;
 };
 
 typedef std::array<unsigned int, 12> gsa_sat_array;
