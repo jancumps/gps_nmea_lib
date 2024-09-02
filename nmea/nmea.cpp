@@ -87,11 +87,17 @@ void nmea::time(const std::string_view& sv, time_t& t) {
 
 void nmea::date(const std::string_view& sv, std::chrono::year_month_day& d) {
 	std::string s(sv);
+// NMEA returns two digits, and not all systems know what century we are in.
+// Current solution: use the century defined in source code.
+// alternative could be to convert to stream and use formatter to parse 2 digit year
+// but that's a bit much for our use case
+#define CENTURY (2000)
 	d = std::chrono::year_month_day{
-			std::chrono::year(std::stoi(s.substr(4)) + 2000), // TODO Y2.1K warning
+			std::chrono::year(std::stoi(s.substr(4)) + CENTURY), 
 			std::chrono::month(std::stoi(s.substr(2,  2))),
 			std::chrono::day(std::stoi(s.substr(0,  2)))
 	};
+#undef CENTURY
 }
 
 bool nmea::valid(const std::string_view& sv) {
