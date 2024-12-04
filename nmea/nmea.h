@@ -15,7 +15,7 @@
 
 namespace nmea {
 
-typedef std::chrono::hh_mm_ss<std::chrono::duration<long long, std::ratio<1, 1000>>> time_t;
+using time_t = std::chrono::hh_mm_ss<std::chrono::duration<long long, std::ratio<1, 1000>>>;
 
 enum class talker_id {
 	notset,				// avoid that an initialised but unset variable assumes the first valid value
