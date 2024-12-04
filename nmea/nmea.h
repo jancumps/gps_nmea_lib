@@ -78,7 +78,7 @@ public:
 	float geosep;
 };
 
-typedef std::array<unsigned int, 12> gsa_sat_array;
+using gsa_sat_array = std::array<unsigned int, 12>;
 
 class gsa {
 public:
@@ -96,7 +96,7 @@ public:
 	unsigned int snr;
 };
 
-typedef std::array<gsv_sat, 4> gsv_sat_array;
+using gsv_sat_array = std::array<gsv_sat, 4>;
 
 class gsv {
 public:
