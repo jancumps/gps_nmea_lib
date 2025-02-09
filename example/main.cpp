@@ -10,7 +10,7 @@
 #include <vector>
 #include <iostream>
 
-#include "nmea.h"
+import nmea;
 
 void test_gll() {
 	std::string reply = "$GPGLL,5051.83778,N,00422.55809,S,185427.150,V,N*4F";
