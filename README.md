@@ -10,3 +10,5 @@ goals:
 1: [C++ parser library for NMEA GPS data - pt. 1: ideas, concepts, early design](https://community.element14.com/technologies/embedded/b/blog/posts/c-parser-library-for-nmea---pt-1-ideas-concepts-early-design)  
 2: [C++ parser library for NMEA GPS data - pt. 2: parse replies with repeating info](https://community.element14.com/technologies/embedded/b/blog/posts/c-parser-library-for-nmea---pt-2-parse-replies-with-repeating-info)  
 3: [C++ parser library for NMEA GPS data - pt. 3: utility class, example use and wrap-up](https://community.element14.com/technologies/embedded/b/blog/posts/c-parser-library-for-nmea---pt-2-parse-replies-with-repeating-info)  
+
+Requires a toolchain that supports C++ modules. Tested with CMake 3.26 and GCC 14.2.1
