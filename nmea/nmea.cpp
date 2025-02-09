@@ -8,7 +8,9 @@
 #include <cassert>
 #include <ranges>
 #include <cmath>
-#include "nmea.h"
+#include <chrono>
+
+import nmea;
 
 using std::operator""sv;
 constexpr auto delim{","sv};

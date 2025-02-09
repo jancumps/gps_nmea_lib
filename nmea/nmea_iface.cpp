@@ -1,19 +1,20 @@
 /*
- * nmea.h
+ * nmea_iface.cpp
  *
  *  Created on: 29 jul. 2024
  *      Author: jancu
  */
 
-#ifndef NMEA_H_
-#define NMEA_H_
-
-#include <string>
+ module;
+ 
+ #include <string>
 #include <array>
 #include <string_view>
 #include <chrono>
 
-namespace nmea {
+export module nmea;
+
+export namespace nmea {
 
 using time_t = std::chrono::hh_mm_ss<std::chrono::duration<long long, std::ratio<1, 1000>>>;
 
@@ -118,5 +119,3 @@ public:
 };
 
 } // namespace nmea
-
-#endif /* NMEA_H_ */
