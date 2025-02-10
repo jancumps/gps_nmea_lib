@@ -5,12 +5,14 @@
  *      Author: jancu
  */
 
+module;
+
 #include <cassert>
 #include <ranges>
 #include <cmath>
 #include <chrono>
 
-import nmea;
+module nmea;
 
 using std::operator""sv;
 constexpr auto delim{","sv};
