@@ -4,7 +4,7 @@ C++ parser builds objects from NMEA data strings.
 Currently supports NMEA 3.1  
 
 [![Open Source](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://opensource.org/)
-![GitHub License](https://img.shields.io/github/license/jancumps/pico_gps_teseo?label=licence)
+![GitHub License](https://img.shields.io/github/license/jancumps/gps_nmea_lib?label=licence)
 [![run unit tests](https://github.com/jancumps/gps_nmea_lib/actions/workflows/test.yml/badge.svg)](https://github.com/jancumps/gps_nmea_lib/actions/workflows/test.yml)
 
 goals:
