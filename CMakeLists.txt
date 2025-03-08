@@ -19,22 +19,22 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-add_executable(${CMAKE_PROJECT_NAME})
-target_sources(${CMAKE_PROJECT_NAME}
+add_executable(${CMAKE_PROJECT_NAME}_nmea)
+target_sources(${CMAKE_PROJECT_NAME}_nmea
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/nmea/nmea.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/test/test_gps_nmea_lib.cpp
 )
-target_sources(${CMAKE_PROJECT_NAME}
+target_sources(${CMAKE_PROJECT_NAME}_nmea
         PUBLIC
         FILE_SET cxx_modules TYPE CXX_MODULES FILES
         ${CMAKE_CURRENT_SOURCE_DIR}/nmea/nmea_iface.cpp
 )
 
-target_link_libraries( ${CMAKE_PROJECT_NAME}
+target_link_libraries( ${CMAKE_PROJECT_NAME}_nmea
         GTest::gtest_main
         GTest::gmock_main
 )
 
 include(GoogleTest)
-gtest_discover_tests(${CMAKE_PROJECT_NAME})
+gtest_discover_tests(${CMAKE_PROJECT_NAME}_nmea)
