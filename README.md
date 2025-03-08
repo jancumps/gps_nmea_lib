@@ -3,6 +3,10 @@
 C++ parser builds objects from NMEA data strings.  
 Currently supports NMEA 3.1  
 
+[![Open Source](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://opensource.org/)
+![GitHub License](https://img.shields.io/github/license/jancumps/pico_gps_teseo?label=licence)
+[![run unit tests](https://github.com/jancumps/gps_nmea_lib/actions/workflows/test.yml/badge.svg)](https://github.com/jancumps/gps_nmea_lib/actions/workflows/test.yml)
+
 goals:
 - NMEA lib code does not need to know what the target microcontroller is.
 - NMEA lib does not depend on your communication layer or GPS driver, as long as it serves data in NMEA format.

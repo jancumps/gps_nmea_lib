@@ -1,0 +1,60 @@
+name: run unit tests
+on:
+  workflow_dispatch:
+  #push:
+  #  branches:
+  #    - 'develop'
+  #    - 'main'
+  pull_request:
+    types: [opened, reopened]
+    branches:
+      - 'develop'
+      - 'main'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Clean workspace
+        run: |
+          echo "Cleaning up previous run"
+          rm -rf "${{ github.workspace }}"
+          mkdir -p "${{ github.workspace }}"
+
+      - name: checkout
+        uses: actions/checkout@v4
+        with:
+          path: gps_nmea_lib
+          submodules: false
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get install ninja-build
+
+          sudo apt-get install cmake
+          sudo add-apt-repository universe
+          sudo apt update
+          sudo apt install gcc-14
+          gcc --version
+          whereis gcc
+          whereis gcc-14
+          ls -la /usr/bin | grep g++
+
+      - name: Build Project
+        working-directory: ${{github.workspace}}/gps_nmea_lib
+        shell: bash
+        run: |
+          echo ${{ github.ref }}
+          mkdir build
+          cd build
+          cmake .. -G "Ninja" -DCMAKE_EXPORT_COMPILE_COMMANDS:BOOL=TRUE -DCMAKE_C_COMPILER:FILEPATH=/usr/bin/x86_64-linux-gnu-gcc-14 -DCMAKE_CXX_COMPILER:FILEPATH=/usr/bin/x86_64-linux-gnu-g++-14 -DCMAKE_BUILD_TYPE=Release
+          cmake --build . --target test_gps_nmea
+          cd ..
+
+      - name: Test Project
+        working-directory: ${{github.workspace}}/gps_nmea_lib
+        shell: bash
+        run: |
+          cd build
+          ctest
+          cd ..
