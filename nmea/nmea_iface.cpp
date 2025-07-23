@@ -43,7 +43,7 @@ enum class quality : unsigned int {
 };
 
 class nmea {
-public:
+public:	
 	nmea() = delete; // prevent  creation of objects of this utility class
 
 	static talker_id talker(const std::string_view& sv);
@@ -56,8 +56,7 @@ public:
 	static quality qual(const std::string_view& sv);
 };
 
-class gll {
-public:
+struct gll {
 	static bool from_data(const std::string& data, gll& gll);
 	talker_id source;
 	float lat;
@@ -66,8 +65,7 @@ public:
     bool valid;
 };
 
-class gga {
-public:
+struct gga {
 	static bool from_data(const std::string& data, gga& gga);
 	talker_id source;
     float lat;
@@ -81,16 +79,14 @@ public:
 
 using gsa_sat_array = std::array<unsigned int, 12>;
 
-class gsa {
-public:
+struct gsa {
 	static bool from_data(const std::string& data, gsa& gsa);
 	talker_id source;
 	talker_id system_id;
 	gsa_sat_array sats;
 };
 
-class gsv_sat {
-public:
+struct gsv_sat {
 	unsigned int prn;
 	unsigned int elev;
 	unsigned int azim;
@@ -99,15 +95,13 @@ public:
 
 using gsv_sat_array = std::array<gsv_sat, 4>;
 
-class gsv {
-public:
+struct gsv {
 	static bool from_data(const std::string& data, gsv& gsv);
 	talker_id source;
 	gsv_sat_array sats;
 };
 
-class rmc {
-public:
+struct rmc {
 	static bool from_data(const std::string& data, rmc& rmc);
 	talker_id source;
 	float lat;
