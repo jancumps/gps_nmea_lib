@@ -14,32 +14,32 @@ import nmea;
 
 void test_gll() {
 	std::string reply = "$GPGLL,5051.83778,N,00422.55809,S,185427.150,V,N*4F";
-    nmea::gll o;
-    nmea::gll::from_data(reply, o);
-
-    std::cout <<
+    if (auto result = nmea::gll::from_data(reply)) {
+    	std::cout <<
     		"GLL " << std::endl <<
-    		"source: " << o.source << ". " <<
-			"lat: " << o.lat << " lon: " << o.lon << ". " <<
-    		o.t << ". " <<
-			"valid: " << o.valid  << ". " <<
+    		"source: " << result.result.source << ". " <<
+			"lat: " << result.result.lat << " lon: " << result.result.lon << ". " <<
+    		result.result.t << ". " <<
+			"valid: " << result.result.valid  << ". " <<
 			std::endl;
+	}
+
     return;
 }
 
 void test_gga() {
 	std::string reply = "$GPGGA,191237.000,5051.78066,N,00422.57079,E,1,05,3.7,027.26,M,47.3,M,,*65";
-    nmea::gga o;
-    nmea::gga::from_data(reply, o);
-
-    std::cout <<
+    if (auto result = nmea::gga::from_data(reply)) {
+	    std::cout <<
     		"GGA " << std::endl <<
-    		"source: " << o.source << ". " <<
-			"lat: " << o.lat << " lon: " << o.lon << ". " <<
-    		o.t << ". " <<
-			"qual: " << o.qual << ", " <<
-			"sats: " << o.sats << ". " <<
+    		"source: " << result.result.source << ". " <<
+			"lat: " << result.result.lat << " lon: " << result.result.lon << ". " <<
+    		result.result.t << ". " <<
+			"qual: " << result.result.qual << ", " <<
+			"sats: " << result.result.sats << ". " <<
 			std::endl;
+	}
+
     return;
 }
 
@@ -50,17 +50,16 @@ void test_gsa() {
 	};
 
 	for(auto r : replies) {
-		nmea::gsa o;
-	    nmea::gsa::from_data(r, o);
-
-	    std::cout <<
+		if (auto result = nmea::gsa::from_data(r)) {
+		    std::cout <<
 	    		"GSA " << std::endl <<
-	    		"source: " << o.source << ". " << std::endl <<
-	       		"system: " << o.system_id << ". " << std::endl;
-	    for(const auto s : o.sats) {
-	    	std::cout << "sat prn: " << s << "." <<
-					std::endl;
-	    }
+	    		"source: " << result.result.source << ". " << std::endl <<
+	       		"system: " << result.result.system_id << ". " << std::endl;
+		    for(const auto s : result.result.sats) {
+	    		std::cout << "sat prn: " << s << "." <<
+				std::endl;
+	    	}
+		}
 	}
     return;
 }
@@ -76,34 +75,32 @@ void test_gsv() {
 	};
 
 	for(auto r : replies) {
-		nmea::gsv o;
-	    nmea::gsv::from_data(r, o);
-
-	    std::cout <<
+		if (auto result = nmea::gsv::from_data(r)) {
+		    std::cout <<
 	    		"GSV " << std::endl <<
-	    		"source: " << o.source << ". " << std::endl;
-	    for(const auto s : o.sats) {
-	    	std::cout << "sat prn: " << s.prn << ", elev: " <<
+	    		"source: " << result.result.source << ". " << std::endl;
+		    for(const auto s : result.result.sats) {
+	    		std::cout << "sat prn: " << s.prn << ", elev: " <<
 	    			s.elev << ", azim: " << s.azim << ", snr: " << s.snr << "." <<
 					std::endl;
-	    }
+	    	}
+		}
 	}
     return;
 }
 
 void test_rmc() {
 	std::string reply = "$GPRMC,185427.150,V,5051.83778,N,00422.55809,E,,,240724,,,N*7F";
-    nmea::rmc o;
-    nmea::rmc::from_data(reply, o);
-
-    std::cout <<
+    if (auto result = nmea::rmc::from_data(reply)) {
+	    std::cout <<
     		"RMC " << std::endl <<
-    		"source: " << o.source << ". " <<
-			"lat: " << o.lat << " lon: " << o.lon << ". " <<
-    		o.t << ". " <<
-    		o.d << ". " <<
-			"valid: " << o.valid  << ". " <<
+    		"source: " << result.result.source << ". " <<
+			"lat: " << result.result.lat << " lon: " << result.result.lon << ". " <<
+    		result.result.t << ". " <<
+    		result.result.d << ". " <<
+			"valid: " << result.result.valid  << ". " <<
 			std::endl;
+	}
     return;
 }
 
