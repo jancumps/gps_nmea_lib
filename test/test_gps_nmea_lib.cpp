@@ -26,7 +26,11 @@ class nmea_gllParser : public nmeaParsers<nmea::gll> {};
 TEST_P(nmea_gllParser, gllparsetest) {
     bool expected = std::get<1>(GetParam());
     std::string s = std::get<0>(GetParam());
-    ASSERT_EQ(expected, o.from_data(s, o));
+    if(auto result = o.from_data(s)) {
+        ASSERT_TRUE(expected);        
+    } else {
+        ASSERT_FALSE(expected);        
+    }
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -44,7 +48,11 @@ class nmea_ggaParser : public nmeaParsers<nmea::gga> {};
 TEST_P(nmea_ggaParser, ggaparsetest) {
     bool expected = std::get<1>(GetParam());
     std::string s = std::get<0>(GetParam());
-    ASSERT_EQ(expected, o.from_data(s, o));
+    if(auto result = o.from_data(s)) {
+        ASSERT_TRUE(expected);        
+    } else {
+        ASSERT_FALSE(expected);        
+    }
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -61,7 +69,11 @@ class nmea_gsaParser : public nmeaParsers<nmea::gsa> {};
 TEST_P(nmea_gsaParser, gsaparsetest) {
     bool expected = std::get<1>(GetParam());
     std::string s = std::get<0>(GetParam());
-    ASSERT_EQ(expected, o.from_data(s, o));
+    if(auto result = o.from_data(s)) {
+        ASSERT_TRUE(expected);        
+    } else {
+        ASSERT_FALSE(expected);        
+    }
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -81,7 +93,17 @@ class nmea_gll : public nmeaTest<nmea::gll> {
 protected:
     nmea_gll() : parse_ok(false) {}
     void SetUp() override {
-        parse_ok = o.from_data("$GPGLL,5051.83778,N,00422.55809,S,185427.150,A,N*4F", o);
+#if __cpp_structured_bindings >= 202403L
+        if (auto [result] = o.from_data("$GPGLL,5051.83778,N,00422.55809,S,185427.150,A,N*4F")) {
+            parse_ok = true;
+            o = result;
+        }
+#else
+        if (auto result = o.from_data("$GPGLL,5051.83778,N,00422.55809,S,185427.150,A,N*4F")) {
+            parse_ok = true;
+            o = result.result;
+        }
+#endif
     }
     bool parse_ok;
 };
@@ -118,7 +140,10 @@ class nmea_gga : public nmeaTest<nmea::gga> {
 protected:
     nmea_gga() : parse_ok(false) {}
     void SetUp() override {
-        parse_ok = o.from_data("$GPGGA,191237.000,5051.78066,N,00422.57079,E,1,05,3.7,027.26,M,47.3,M,,*65", o);
+        if (auto result = o.from_data("$GPGGA,191237.000,5051.78066,N,00422.57079,E,1,05,3.7,027.26,M,47.3,M,,*65")) {
+            parse_ok = true;
+            o = result.result;
+        }
     }
     bool parse_ok;
 };
