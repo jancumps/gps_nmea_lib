@@ -56,8 +56,15 @@ public:
 	static quality qual(const std::string_view& sv);
 };
 
+template <class T> struct nmea_result {
+    T result;
+	bool success = false;	
+    constexpr explicit operator bool() const noexcept { return success; }
+};
+
 struct gll {
-	static bool from_data(const std::string& data, gll& gll);
+	using gll_result = nmea_result<gll>;
+	static gll_result from_data(const std::string& data);
 	talker_id source;
 	float lat;
     float lon;
@@ -66,7 +73,8 @@ struct gll {
 };
 
 struct gga {
-	static bool from_data(const std::string& data, gga& gga);
+	using gga_result = nmea_result<gga>;
+	static gga_result from_data(const std::string& data);
 	talker_id source;
     float lat;
     float lon;
@@ -80,7 +88,8 @@ struct gga {
 using gsa_sat_array = std::array<unsigned int, 12>;
 
 struct gsa {
-	static bool from_data(const std::string& data, gsa& gsa);
+	using gsa_result = nmea_result<gsa>;
+	static gsa_result from_data(const std::string& data);
 	talker_id source;
 	talker_id system_id;
 	gsa_sat_array sats;
@@ -96,13 +105,15 @@ struct gsv_sat {
 using gsv_sat_array = std::array<gsv_sat, 4>;
 
 struct gsv {
-	static bool from_data(const std::string& data, gsv& gsv);
+	using gsv_result = nmea_result<gsv>;
+	static gsv_result from_data(const std::string& data);
 	talker_id source;
 	gsv_sat_array sats;
 };
 
 struct rmc {
-	static bool from_data(const std::string& data, rmc& rmc);
+	using rmc_result = nmea_result<rmc>;
+	static rmc_result from_data(const std::string& data);
 	talker_id source;
 	float lat;
     float lon;

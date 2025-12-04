@@ -118,102 +118,108 @@ quality nmea::qual(const std::string_view& sv) {
 }
 
 // $GPGLL,<Lat>,<N/S>,<Long>,<E/W>,<Timestamp>,<Status>,<mode indicator>*<checksum><cr><lf>
-bool gll::from_data(const std::string& data, gll& gll) {
+
+gll::gll_result gll::from_data(const std::string& data) {
 	unsigned int field = 0;
+	gll::gll_result gll;
     for (const auto word : std::views::split(data, delim)) {
     	switch (field) {
     	case 0: // talker id
-    		gll.source = nmea::talker(std::string_view(word));
+    		gll.result.source = nmea::talker(std::string_view(word));
     		break;
     	case 1: // latitude
-    		gll.lat = nmea::coord(2, std::string_view(word));
+    		gll.result.lat = nmea::coord(2, std::string_view(word));
     		break;
     	case 2: // latitude direction
     		if (nmea::dir(std::string_view(word)) == direction::s) {
-    			gll.lat = gll.lat * -1;
+    			gll.result.lat = gll.result.lat * -1;
     		}
     		break;
     	case 3: // longitude
-    		gll.lon = nmea::coord(3, std::string_view(word));
+    		gll.result.lon = nmea::coord(3, std::string_view(word));
     		break;
     	case 4: // longitude direction
     		if (nmea::dir(std::string_view(word)) == direction::w) {
-    			gll.lon = gll.lon * -1;
+    			gll.result.lon = gll.result.lon * -1;
     		}
     		break;
     	case 5: // timestamp
-    		nmea::time(std::string_view(word), gll.t);
+    		nmea::time(std::string_view(word), gll.result.t);
     		break;
     	case 6: // valid
-    		gll.valid = nmea::valid(std::string_view(word));
+    		gll.result.valid = nmea::valid(std::string_view(word));
     		break;
     	default: // skip 7
     		break;
     	}
     	field++;
     }
-	return (field == 8); // everything parsed
+	gll.success = (field == 8); // everything parsed
+	return gll; 
 }
 
 // $GPGGA,<Timestamp>,<Lat>,<N/S>,<Long>,<E/W>,<GPSQual>,<Sats>,<HDOP>,<Alt>,<AltVal>,<GeoSep>,
 // <GeoVal>,<DGPSAge>,<DGPSRef>*<checksum><cr><lf>
-bool gga::from_data(const std::string& data, gga& gga) {
+gga::gga_result gga::from_data(const std::string& data) {
 	unsigned int field = 0;
+	gga_result gga;
     for (const auto word : std::views::split(data, delim)) {
     	switch (field) {
     	case 0: // talker id
-    		gga.source = nmea::talker(std::string_view(word));
+    		gga.result.source = nmea::talker(std::string_view(word));
     		break;
     	case 1: // timestamp
-    		nmea::time(std::string_view(word), gga.t);
+    		nmea::time(std::string_view(word), gga.result.t);
     		break;
     	case 2: // latitude
-    		gga.lat = nmea::coord(2, std::string_view(word));
+    		gga.result.lat = nmea::coord(2, std::string_view(word));
     		break;
     	case 3: // latitude direction
     		if (nmea::dir(std::string_view(word)) == direction::s) {
-    			gga.lat = gga.lat * -1;
+    			gga.result.lat = gga.result.lat * -1;
     		}
     		break;
     	case 4: // longitude
-    		gga.lon = nmea::coord(3, std::string_view(word));
+    		gga.result.lon = nmea::coord(3, std::string_view(word));
     		break;
     	case 5: // longitude direction
     		if (nmea::dir(std::string_view(word)) == direction::w) {
-    			gga.lon = gga.lon * -1;
+    			gga.result.lon = gga.result.lon * -1;
     		}
     		break;
     	case 6: // qual
-    		gga.qual = nmea::qual(std::string_view(word));
+    		gga.result.qual = nmea::qual(std::string_view(word));
     		break;
     	case 7: // sats
-			gga.sats = std::stoi(std::string(std::string_view(word)));
+			gga.result.sats = std::stoi(std::string(std::string_view(word)));
     		break;
     	case 9: // altitude (in meters)
 			// a float (and a double) may not precisely represent the value in the message
-			gga.alt = std::stof(std::string(std::string_view(word)), nullptr);
+			gga.result.alt = std::stof(std::string(std::string_view(word)), nullptr);
     		break;		
     	case 11: // geoid separation (in meters)
 			// a float (and a double) may not precisely represent the value in the message
-			gga.geosep = std::stof(std::string(std::string_view(word)), nullptr);
+			gga.result.geosep = std::stof(std::string(std::string_view(word)), nullptr);
     		break;		
     	default: // skip 8, 10, 12 .. 15
     		break;
     	}
     	field++;
     }
-	return (field == 15); // everything parsed
+	gga.success = (field == 15); // everything parsed
+	return gga; 
 }
 
 // $GNGSA,A,3,15,18,,,,,,,,,,,4.7,3.7,2.9*2D
 // $GNGSA,A,3,73,65,81,,,,,,,,,,4.7,3.7,2.9*2E
-bool gsa::from_data(const std::string& data, gsa& gsa) {
+gsa::gsa_result gsa::from_data(const std::string& data) {
 	unsigned int field = 0;
+	gsa_result gsa;
 	std::string_view v = std::string_view(data).substr(0, data.find('*'));
     for (const auto word : std::views::split(v, delim)) {
     	switch (field) {
     	case 0: // talker id
-    		gsa.source = nmea::talker(std::string_view(word));
+    		gsa.result.source = nmea::talker(std::string_view(word));
     		break;
     	case 3:
     	case 4:
@@ -228,21 +234,22 @@ bool gsa::from_data(const std::string& data, gsa& gsa) {
     	case 13:
     	case 14:
     		if (std::string_view(word).length() == 0) {
-    			gsa.sats[field - 3] = 0;
+    			gsa.result.sats[field - 3] = 0;
     		} else {
-    			gsa.sats[field - 3] =
+    			gsa.result.sats[field - 3] =
     					std::stoi(std::string(std::string_view(word)));
     		}
     		break;
     	case 15:
-    		gsa.system_id = nmea::system(std::string_view(word));
+    		gsa.result.system_id = nmea::system(std::string_view(word));
     		break;
     	default: // skip 1,2, 16, 17
     		break;
     	}
     	field++;
     }
-	return (field == 18); // everything parsed
+	gsa.success = (field == 18); // everything parsed
+	return gsa; 
 }
 
 // $GPGSV,3,1,11,13,79,310,,14,53,113,,05,51,214,,30,47,067,*72
@@ -250,22 +257,23 @@ bool gsa::from_data(const std::string& data, gsa& gsa) {
 // $GPGSV,3,3,11,18,16,298,25,24,08,249,,08,08,029,18,,,,*40
 // $GLGSV,2,1,08,72,79,113,,74,77,084,,75,38,202,,65,37,317,28*68
 // $GLGSV,2,2,08,73,34,040,35,71,28,130,,81,13,333,24,82,08,017,*68
-bool gsv::from_data(const std::string& data, gsv& gsv) {
+gsv::gsv_result gsv::from_data(const std::string& data) {
 	unsigned int field = 0;
+	gsv_result gsv;
 	std::string_view v = std::string_view(data).substr(0, data.find('*'));
     for (const auto word : std::views::split(v, delim)) {
     	switch (field) {
     	case 0: // talker id
-    		gsv.source = nmea::talker(std::string_view(word));
+    		gsv.result.source = nmea::talker(std::string_view(word));
     		break;
     	case 4:
     	case 8:
     	case 12:
     	case 16:
     		if (std::string_view(word).length() == 0) {
-    			gsv.sats[(field - 4) / 4 ].prn = 0;
+    			gsv.result.sats[(field - 4) / 4 ].prn = 0;
     		} else {
-    			gsv.sats[(field - 4) / 4 ].prn =
+    			gsv.result.sats[(field - 4) / 4 ].prn =
     					std::stoi(std::string(std::string_view(word)));
     		}
     		break;
@@ -274,9 +282,9 @@ bool gsv::from_data(const std::string& data, gsv& gsv) {
     	case 13:
     	case 17:
     		if (std::string_view(word).length() == 0) {
-    			gsv.sats[(field - 5) / 4 ].elev = 0;
+    			gsv.result.sats[(field - 5) / 4 ].elev = 0;
     		} else {
-    			gsv.sats[(field - 5) / 4 ].elev =
+    			gsv.result.sats[(field - 5) / 4 ].elev =
     					std::stoi(std::string(std::string_view(word)));
     		}
     		break;
@@ -285,9 +293,9 @@ bool gsv::from_data(const std::string& data, gsv& gsv) {
     	case 14:
     	case 18:
     		if (std::string_view(word).length() == 0) {
-    			gsv.sats[(field - 6) / 4 ].azim = 0;
+    			gsv.result.sats[(field - 6) / 4 ].azim = 0;
     		} else {
-    			gsv.sats[(field - 6) / 4 ].azim =
+    			gsv.result.sats[(field - 6) / 4 ].azim =
     					std::stoi(std::string(std::string_view(word)));
     		}
     		break;
@@ -296,9 +304,9 @@ bool gsv::from_data(const std::string& data, gsv& gsv) {
     	case 15:
     	case 19:
     		if (std::string_view(word).length() == 0) {
-    			gsv.sats[(field - 7) / 4 ].snr = 0;
+    			gsv.result.sats[(field - 7) / 4 ].snr = 0;
     		} else {
-    			gsv.sats[(field - 7) / 4 ].snr =
+    			gsv.result.sats[(field - 7) / 4 ].snr =
     					std::stoi(std::string(std::string_view(word)));
     		}
     		break;
@@ -307,48 +315,51 @@ bool gsv::from_data(const std::string& data, gsv& gsv) {
     	}
     	field++;
     }
-	return (field == 20); // everything parsed
+	gsv.success = (field == 20); // everything parsed
+	return gsv; 
 }
 
 // $GPRMC,185427.150,V,5051.83778,N,00422.55809,E,,,240724,,,N*7F
-bool rmc::from_data(const std::string& data, rmc& rmc) {
+rmc::rmc_result rmc::from_data(const std::string& data) {
 	unsigned int field = 0;
+	rmc_result rmc;
     for (const auto word : std::views::split(data, delim)) {
     	switch (field) {
     	case 0: // talker id
-    		rmc.source = nmea::talker(std::string_view(word));
+    		rmc.result.source = nmea::talker(std::string_view(word));
     		break;
     	case 1: // timestamp
-    		nmea::time(std::string_view(word), rmc.t);
+    		nmea::time(std::string_view(word), rmc.result.t);
     		break;
     	case 2: // valid
-    		rmc.valid = nmea::valid(std::string_view(word));
+    		rmc.result.valid = nmea::valid(std::string_view(word));
     		break;
     	case 3: // latitude
-    		rmc.lat = nmea::coord(2, std::string_view(word));
+    		rmc.result.lat = nmea::coord(2, std::string_view(word));
     		break;
     	case 4: // latitude direction
     		if (nmea::dir(std::string_view(word)) == direction::s) {
-    			rmc.lat = rmc.lat * -1;
+    			rmc.result.lat = rmc.result.lat * -1;
     		}
     		break;
     	case 5: // longitude
-    		rmc.lon = nmea::coord(3, std::string_view(word));
+    		rmc.result.lon = nmea::coord(3, std::string_view(word));
     		break;
     	case 6: // longitude direction
     		if (nmea::dir(std::string_view(word)) == direction::w) {
-    			rmc.lon = rmc.lon * -1;
+    			rmc.result.lon = rmc.result.lon * -1;
     		}
     		break;
     	case 9: // dqtestamp
-    		nmea::date(std::string_view(word), rmc.d);
+    		nmea::date(std::string_view(word), rmc.result.d);
     		break;
     	default: // skip 7, 8, 10, 11, 12
     		break;
     	}
     	field++;
     }
-	return (field == 13); // everything parsed
+	rmc.success = (field == 13); // everything parsed
+	return rmc; 
 }
 
 } // namespace nmea
