@@ -17,10 +17,10 @@ void test_gll() {
     if (auto [result, success] = nmea::gll::from_data(reply)) {
     	std::cout <<
     		"GLL " << std::endl <<
-    		"source: " << result.result.source << ". " <<
-			"lat: " << result.result.lat << " lon: " << result.result.lon << ". " <<
-    		result.result.t << ". " <<
-			"valid: " << result.result.valid  << ". " <<
+    		"source: " << result.source << ". " <<
+			"lat: " << result.lat << " lon: " << result.lon << ". " <<
+    		result.t << ". " <<
+			"valid: " << result.valid  << ". " <<
 			std::endl;
 	}
 
@@ -32,11 +32,11 @@ void test_gga() {
     if (auto [result, success] = nmea::gga::from_data(reply)) {
 	    std::cout <<
     		"GGA " << std::endl <<
-    		"source: " << result.result.source << ". " <<
-			"lat: " << result.result.lat << " lon: " << result.result.lon << ". " <<
-    		result.result.t << ". " <<
-			"qual: " << result.result.qual << ", " <<
-			"sats: " << result.result.sats << ". " <<
+    		"source: " << result.source << ". " <<
+			"lat: " << result.lat << " lon: " << result.lon << ". " <<
+    		result.t << ". " <<
+			"qual: " << result.qual << ", " <<
+			"sats: " << result.sats << ". " <<
 			std::endl;
 	}
 
@@ -53,9 +53,9 @@ void test_gsa() {
 		if (auto [result, success] = nmea::gsa::from_data(r)) {
 		    std::cout <<
 	    		"GSA " << std::endl <<
-	    		"source: " << result.result.source << ". " << std::endl <<
-	       		"system: " << result.result.system_id << ". " << std::endl;
-		    for(const auto s : result.result.sats) {
+	    		"source: " << result.source << ". " << std::endl <<
+	       		"system: " << result.system_id << ". " << std::endl;
+		    for(const auto s : result.sats) {
 	    		std::cout << "sat prn: " << s << "." <<
 				std::endl;
 	    	}
@@ -78,8 +78,8 @@ void test_gsv() {
 		if (auto [result, success] = nmea::gsv::from_data(r)) {
 		    std::cout <<
 	    		"GSV " << std::endl <<
-	    		"source: " << result.result.source << ". " << std::endl;
-		    for(const auto s : result.result.sats) {
+	    		"source: " << result.source << ". " << std::endl;
+		    for(const auto s : result.sats) {
 	    		std::cout << "sat prn: " << s.prn << ", elev: " <<
 	    			s.elev << ", azim: " << s.azim << ", snr: " << s.snr << "." <<
 					std::endl;
@@ -94,11 +94,11 @@ void test_rmc() {
     if (auto [result, success] = nmea::rmc::from_data(reply)) {
 	    std::cout <<
     		"RMC " << std::endl <<
-    		"source: " << result.result.source << ". " <<
-			"lat: " << result.result.lat << " lon: " << result.result.lon << ". " <<
-    		result.result.t << ". " <<
-    		result.result.d << ". " <<
-			"valid: " << result.result.valid  << ". " <<
+    		"source: " << result.source << ". " <<
+			"lat: " << result.lat << " lon: " << result.lon << ". " <<
+    		result.t << ". " <<
+    		result.d << ". " <<
+			"valid: " << result.valid  << ". " <<
 			std::endl;
 	}
     return;
