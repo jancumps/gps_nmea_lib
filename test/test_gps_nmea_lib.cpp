@@ -93,7 +93,7 @@ class nmea_gll : public nmeaTest<nmea::gll> {
 protected:
     nmea_gll() : parse_ok(false) {}
     void SetUp() override {
-        if (auto [result, success] = o.from_data("$GPGLL,5051.83778,N,00422.55809,S,185427.150,A,N*4F")) {
+        if (auto [result] = o.from_data("$GPGLL,5051.83778,N,00422.55809,S,185427.150,A,N*4F")) {
             parse_ok = true;
             o = result;
         }

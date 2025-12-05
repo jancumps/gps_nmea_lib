@@ -154,7 +154,7 @@ gll::gll_result gll::from_data(const std::string& data) {
     	}
     	field++;
     }
-	gll.success = (field == 8); // everything parsed
+	gll.result.success = (field == 8); // everything parsed
 	return gll; 
 }
 
@@ -206,7 +206,7 @@ gga::gga_result gga::from_data(const std::string& data) {
     	}
     	field++;
     }
-	gga.success = (field == 15); // everything parsed
+	gga.result.success = (field == 15); // everything parsed
 	return gga; 
 }
 
@@ -248,7 +248,7 @@ gsa::gsa_result gsa::from_data(const std::string& data) {
     	}
     	field++;
     }
-	gsa.success = (field == 18); // everything parsed
+	gsa.result.success = (field == 18); // everything parsed
 	return gsa; 
 }
 
@@ -315,7 +315,7 @@ gsv::gsv_result gsv::from_data(const std::string& data) {
     	}
     	field++;
     }
-	gsv.success = (field == 20); // everything parsed
+	gsv.result.success = (field == 20); // everything parsed
 	return gsv; 
 }
 
@@ -358,7 +358,7 @@ rmc::rmc_result rmc::from_data(const std::string& data) {
     	}
     	field++;
     }
-	rmc.success = (field == 13); // everything parsed
+	rmc.result.success = (field == 13); // everything parsed
 	return rmc; 
 }
 

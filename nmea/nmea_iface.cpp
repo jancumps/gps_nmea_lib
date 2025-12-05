@@ -11,6 +11,8 @@ module;
 #include <array>
 #include <string_view>
 #include <chrono>
+#include <concepts>
+#include <type_traits>
 
 export module nmea;
 
@@ -56,10 +58,15 @@ public:
 	static quality qual(const std::string_view& sv);
 };
 
-template <class T> struct nmea_result {
+template<typename T>
+concept has_success_bool =
+	requires(T t) {
+	   	true; // { t.success; } -> std::same_as<bool>; // need to read up
+	};
+
+template <has_success_bool T> struct nmea_result {
     T result;
-	bool success = false;	
-    constexpr explicit operator bool() const noexcept { return success; }
+    constexpr explicit operator bool() const noexcept { return result.success; }
 };
 
 struct gll {
@@ -70,6 +77,7 @@ struct gll {
     float lon;
     time_t t;
     bool valid;
+	bool success = false;
 };
 
 struct gga {
@@ -83,6 +91,7 @@ struct gga {
     quality qual;
 	float alt;
 	float geosep;
+	bool success = false;
 };
 
 using gsa_sat_array = std::array<unsigned int, 12>;
@@ -93,6 +102,7 @@ struct gsa {
 	talker_id source;
 	talker_id system_id;
 	gsa_sat_array sats;
+	bool success = false;
 };
 
 struct gsv_sat {
@@ -109,6 +119,7 @@ struct gsv {
 	static gsv_result from_data(const std::string& data);
 	talker_id source;
 	gsv_sat_array sats;
+	bool success = false;
 };
 
 struct rmc {
@@ -121,6 +132,7 @@ struct rmc {
     time_t t;
     std::chrono::year_month_day d;
     bool valid;
+	bool success = false;
 };
 
 } // namespace nmea
