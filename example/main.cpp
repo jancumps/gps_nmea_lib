@@ -14,7 +14,7 @@ import nmea;
 
 void test_gll() {
 	std::string reply = "$GPGLL,5051.83778,N,00422.55809,S,185427.150,V,N*4F";
-    if (auto [result, success] = nmea::gll::from_data(reply)) {
+    if (auto [result] = nmea::gll::from_data(reply)) {
     	std::cout <<
     		"GLL " << std::endl <<
     		"source: " << result.source << ". " <<
@@ -29,7 +29,7 @@ void test_gll() {
 
 void test_gga() {
 	std::string reply = "$GPGGA,191237.000,5051.78066,N,00422.57079,E,1,05,3.7,027.26,M,47.3,M,,*65";
-    if (auto [result, success] = nmea::gga::from_data(reply)) {
+    if (auto [result] = nmea::gga::from_data(reply)) {
 	    std::cout <<
     		"GGA " << std::endl <<
     		"source: " << result.source << ". " <<
@@ -50,7 +50,7 @@ void test_gsa() {
 	};
 
 	for(auto r : replies) {
-		if (auto [result, success] = nmea::gsa::from_data(r)) {
+		if (auto [result] = nmea::gsa::from_data(r)) {
 		    std::cout <<
 	    		"GSA " << std::endl <<
 	    		"source: " << result.source << ". " << std::endl <<
@@ -75,7 +75,7 @@ void test_gsv() {
 	};
 
 	for(auto r : replies) {
-		if (auto [result, success] = nmea::gsv::from_data(r)) {
+		if (auto [result] = nmea::gsv::from_data(r)) {
 		    std::cout <<
 	    		"GSV " << std::endl <<
 	    		"source: " << result.source << ". " << std::endl;
@@ -91,7 +91,7 @@ void test_gsv() {
 
 void test_rmc() {
 	std::string reply = "$GPRMC,185427.150,V,5051.83778,N,00422.55809,E,,,240724,,,N*7F";
-    if (auto [result, success] = nmea::rmc::from_data(reply)) {
+    if (auto [result] = nmea::rmc::from_data(reply)) {
 	    std::cout <<
     		"RMC " << std::endl <<
     		"source: " << result.source << ". " <<
