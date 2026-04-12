@@ -52,8 +52,8 @@ public:
 	static talker_id system(const std::string_view& sv);
 	static float coord(const unsigned int degrees_chars, const std::string_view& sv);
 	static direction dir(const std::string_view& sv);
-	static void time(const std::string_view& sv, time_t& t);
-	static void date(const std::string_view& sv, std::chrono::year_month_day& d);
+	static time_t time(const std::string_view& sv);
+	static std::chrono::year_month_day date(const std::string_view& sv);
 	static bool valid(const std::string_view& sv);
 	static quality qual(const std::string_view& sv);
 };

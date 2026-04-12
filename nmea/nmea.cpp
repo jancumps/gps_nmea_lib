@@ -79,9 +79,9 @@ direction nmea::dir(const std::string_view& sv) {
 	return d;
 }
 
-void nmea::time(const std::string_view& sv, time_t& t) {
+time_t nmea::time(const std::string_view& sv) {
 	std::string s(sv);
-		t = time_t{
+	return time_t{
 			std::chrono::hours(std::stoi(s.substr(0,  2))) +
 			std::chrono::minutes(std::stoi(s.substr(2,  2))) +
 		    std::chrono::seconds(std::stoi(s.substr(4,  2))) +
@@ -89,14 +89,14 @@ void nmea::time(const std::string_view& sv, time_t& t) {
 	};
 }
 
-void nmea::date(const std::string_view& sv, std::chrono::year_month_day& d) {
+std::chrono::year_month_day nmea::date(const std::string_view& sv) {
 	std::string s(sv);
 // NMEA returns two digits, and not all systems know what century we are in.
 // Current solution: use the century defined in source code.
 // alternative could be to convert to stream and use formatter to parse 2 digit year
 // but that's a bit much for our use case
 #define CENTURY (2000)
-	d = std::chrono::year_month_day{
+	return std::chrono::year_month_day{
 			std::chrono::year(std::stoi(s.substr(4)) + CENTURY), 
 			std::chrono::month(std::stoi(s.substr(2,  2))),
 			std::chrono::day(std::stoi(s.substr(0,  2)))
@@ -144,7 +144,7 @@ gll::gll_result gll::from_data(const std::string& data) {
     		}
     		break;
     	case 5: // timestamp
-    		nmea::time(std::string_view(word), gll.result.t);
+    		gll.result.t = nmea::time(std::string_view(word));
     		break;
     	case 6: // valid
     		gll.result.valid = nmea::valid(std::string_view(word));
@@ -169,7 +169,7 @@ gga::gga_result gga::from_data(const std::string& data) {
     		gga.result.source = nmea::talker(std::string_view(word));
     		break;
     	case 1: // timestamp
-    		nmea::time(std::string_view(word), gga.result.t);
+    		gga.result.t = nmea::time(std::string_view(word));
     		break;
     	case 2: // latitude
     		gga.result.lat = nmea::coord(2, std::string_view(word));
@@ -329,7 +329,7 @@ rmc::rmc_result rmc::from_data(const std::string& data) {
     		rmc.result.source = nmea::talker(std::string_view(word));
     		break;
     	case 1: // timestamp
-    		nmea::time(std::string_view(word), rmc.result.t);
+    		rmc.result.t = nmea::time(std::string_view(word));
     		break;
     	case 2: // valid
     		rmc.result.valid = nmea::valid(std::string_view(word));
@@ -351,7 +351,7 @@ rmc::rmc_result rmc::from_data(const std::string& data) {
     		}
     		break;
     	case 9: // dqtestamp
-    		nmea::date(std::string_view(word), rmc.result.d);
+    		rmc.result.d = nmea::date(std::string_view(word));
     		break;
     	default: // skip 7, 8, 10, 11, 12
     		break;
